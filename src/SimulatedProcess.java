@@ -2,24 +2,30 @@
  * CS 149 Group 2
  * Homework 2
  */
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Johnny
  */
-public class SimulatedProcess implements Runnable {
+public class SimulatedProcess {
 
+    private static long nextpID = 0;
+    private final long pId;
     private final String name;
     private final float arrivalTime, totalRunTime;
     private final int priority;
+    private double waiting, response = 0;
+    private float startTime = -1, finishTime;
+    private boolean isFinished;
+    private float timeRemaining;
 
-    public SimulatedProcess(String name, float arrivalTime, float totalRunTime, int priority) {
-        this.name = name;
+    public SimulatedProcess(float arrivalTime, float totalRunTime, int priority) {
+        pId = ++nextpID;
+        this.name = "P" + pId;
         this.arrivalTime = arrivalTime;
         this.totalRunTime = totalRunTime;
         this.priority = priority;
+        this.timeRemaining = totalRunTime;
     }
 
     public String getName() {
@@ -38,18 +44,48 @@ public class SimulatedProcess implements Runnable {
         return priority;
     }
 
-    @Override
-    public String toString() {
-        return name + ": AT=" + arrivalTime + " TR=" + totalRunTime + " priority=" + priority;
+    public double getTurnaroundTime() {
+        return waiting + totalRunTime;
     }
 
-    @Override
-    public void run() {
-        try {
-            Thread.sleep((long) totalRunTime);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(SimulatedProcess.class.getName()).log(Level.SEVERE, null, ex);
+    public double getWaitingTime() {
+        return waiting;
+    }
+
+    public double getResponseTime() {
+        return response;
+    }
+
+    public void executing(float time) {
+        if (startTime == -1) {
+            startTime = time;
+            response = startTime - arrivalTime;
+        }
+        timeRemaining -= CPUScheduler.TIME_UNIT_QUANTA;
+        if (time - startTime >= totalRunTime) {
+            isFinished = true;
+            finishTime = startTime + totalRunTime;
         }
     }
 
+    public void waiting() {
+        waiting += CPUScheduler.TIME_UNIT_QUANTA;
+    }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public float getFinishTime() {
+        return finishTime;
+    }
+
+    public float getTimeRemaining() {
+        return timeRemaining;
+    }
+
+    @Override
+    public String toString() {
+        return "Name=" + name + "/Arrival Time=" + arrivalTime + "/Expected Runtime=" + totalRunTime + "/Priority=" + priority;
+    }
 }
