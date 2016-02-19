@@ -41,7 +41,6 @@ public class FirstComeFirstServe implements Scheduler {
         }
         if (proc.isFinished()) {
             finished.put(time, proc);
-            readyQueue.remove(0);
             if (time >= CPUScheduler.QUANTA_TO_RUN - 1.0) {
                 shouldStop = true;
             }
