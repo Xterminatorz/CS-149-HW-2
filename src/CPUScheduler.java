@@ -20,14 +20,29 @@ public class CPUScheduler {
     private final Timer timer;
     private final List<SimulatedProcess> processes = new ArrayList<>();
     private float currentTime = 0;
+
+    /**
+     * A time unit
+     */
     public static final double TIME_UNIT_QUANTA = 1.0;
+
+    /**
+     * Amount of quanta to run
+     */
     public static final double QUANTA_TO_RUN = 100.0;
 
+    /**
+     * Sets up a new CPU scheduler with the given algorithm
+     * @param alg The algorithm to run
+     */
     public CPUScheduler(Scheduler alg) {
         this.alg = alg;
         timer = new Timer();
     }
 
+    /**
+     * Generates new processes to put on scheduler
+     */
     public void generateProcesses() {
         Random rnd = new Random(0);
         for (int i = 0; i < 50; i++) {
@@ -35,13 +50,18 @@ public class CPUScheduler {
             processes.add(proc);
             System.out.println(proc.toString());
         }
+        // Sort by arrival time
         processes.sort((p1, p2) -> Float.compare(p1.getArrivalTime(), p2.getArrivalTime()));
     }
 
+    /**
+     * Starts the scheduler
+     */
     public void start() {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+                // Adds process to scheduler if current time is >= arrival time of process
                 Iterator<SimulatedProcess> it = processes.iterator();
                 while (it.hasNext()) {
                     SimulatedProcess proc = it.next();
@@ -52,14 +72,14 @@ public class CPUScheduler {
                         break;
                     }
                 }
-                alg.executing(currentTime);
-                currentTime += TIME_UNIT_QUANTA;
+                alg.executing(currentTime); // Run algorithm
+                currentTime += TIME_UNIT_QUANTA; // Increase CPU time
                 if (processes.isEmpty() && (alg.isEmpty() || alg.shouldStop())) {
                     timer.cancel();
                     calcStats(alg.getFinishedProcesses());
                 }
             }
-        }, 0, 10);
+        }, 0, 1);
     }
 
     private void calcStats(Collection<SimulatedProcess> procs) {
