@@ -7,7 +7,7 @@
  *
  * @author Johnny
  */
-public class SimulatedProcess {
+public class SimulatedProcess{
 
     private static long nextpID = 0;
     private final long pId;
@@ -142,4 +142,5 @@ public class SimulatedProcess {
     public String toString() {
         return "Name=" + name + "/Arrival Time=" + arrivalTime + "/Expected Runtime=" + totalRunTime + "/Priority=" + priority;
     }
+
 }

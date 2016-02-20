@@ -4,6 +4,7 @@
  */
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -50,8 +51,13 @@ public class CPUScheduler {
             processes.add(proc);
             System.out.println(proc.toString());
         }
+<<<<<<< HEAD
+		processes.sort((p1, p2) -> Float.compare(p1.getArrivalTime(), p2.getArrivalTime()));
+        
+=======
         // Sort by arrival time
         processes.sort((p1, p2) -> Float.compare(p1.getArrivalTime(), p2.getArrivalTime()));
+>>>>>>> refs/remotes/origin/master
     }
 
     /**

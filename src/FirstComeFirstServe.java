@@ -51,8 +51,12 @@ public class FirstComeFirstServe implements Scheduler {
             readyQueue.get(i).waiting(); // Increment wait timer on process
         }
         if (proc.isFinished()) {
+<<<<<<< HEAD
+            finished.put(time, proc);
+=======
             finished.put(time, proc); // Adds to finished list
             readyQueue.remove(0); // Remove from ready queue
+>>>>>>> refs/remotes/origin/master
             if (time >= CPUScheduler.QUANTA_TO_RUN - 1.0) {
                 shouldStop = true;
             }
