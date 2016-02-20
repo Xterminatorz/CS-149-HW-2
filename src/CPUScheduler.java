@@ -4,12 +4,9 @@
  */
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  *
@@ -18,9 +15,10 @@ import java.util.TimerTask;
 public class CPUScheduler {
 
     private final Scheduler alg;
-    private final Timer timer;
     private final List<SimulatedProcess> processes = new ArrayList<>();
     private float currentTime = 0;
+    private final List<Statistics> stats = new ArrayList<>();
+    private static final Random R = new Random();
 
     /**
      * A time unit
@@ -34,58 +32,59 @@ public class CPUScheduler {
 
     /**
      * Sets up a new CPU scheduler with the given algorithm
+     *
      * @param alg The algorithm to run
      */
     public CPUScheduler(Scheduler alg) {
         this.alg = alg;
-        timer = new Timer();
+    }
+
+    /**
+     * Resets CPU state
+     */
+    public void reset() {
+        processes.clear();
+        alg.reset();
+        currentTime = 0;
     }
 
     /**
      * Generates new processes to put on scheduler
      */
     public void generateProcesses() {
-        Random rnd = new Random(0);
         for (int i = 0; i < 50; i++) {
-            SimulatedProcess proc = new SimulatedProcess(rnd.nextFloat() * 99, rnd.nextFloat() * 9.9f + 0.1f, rnd.nextInt(4) + 1);
+            SimulatedProcess proc = new SimulatedProcess(R.nextFloat() * 99, R.nextFloat() * 9.9f + 0.1f, R.nextInt(4) + 1);
             processes.add(proc);
             System.out.println(proc.toString());
         }
-<<<<<<< HEAD
-		processes.sort((p1, p2) -> Float.compare(p1.getArrivalTime(), p2.getArrivalTime()));
-        
-=======
         // Sort by arrival time
         processes.sort((p1, p2) -> Float.compare(p1.getArrivalTime(), p2.getArrivalTime()));
->>>>>>> refs/remotes/origin/master
     }
 
     /**
      * Starts the scheduler
      */
     public void start() {
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                // Adds process to scheduler if current time is >= arrival time of process
-                Iterator<SimulatedProcess> it = processes.iterator();
-                while (it.hasNext()) {
-                    SimulatedProcess proc = it.next();
-                    if (currentTime >= proc.getArrivalTime()) {
-                        alg.addProcess(proc);
-                        it.remove();
-                    } else {
-                        break;
-                    }
-                }
-                alg.executing(currentTime); // Run algorithm
-                currentTime += TIME_UNIT_QUANTA; // Increase CPU time
-                if (processes.isEmpty() && (alg.isEmpty() || alg.shouldStop())) {
-                    timer.cancel();
-                    calcStats(alg.getFinishedProcesses());
+        boolean stop = false;
+        while (!stop) {
+            // Adds process to scheduler if current time is >= arrival time of process
+            Iterator<SimulatedProcess> it = processes.iterator();
+            while (it.hasNext()) {
+                SimulatedProcess proc = it.next();
+                if (currentTime >= proc.getArrivalTime()) {
+                    alg.addProcess(proc);
+                    it.remove();
+                } else {
+                    break;
                 }
             }
-        }, 0, 1);
+            alg.executing(currentTime); // Run algorithm
+            currentTime += TIME_UNIT_QUANTA; // Increase CPU time
+            if (processes.isEmpty() && (alg.isEmpty() || alg.shouldStop())) {
+                stop = true;
+                calcStats(alg.getFinishedProcesses());
+            }
+        }
     }
 
     private void calcStats(Collection<SimulatedProcess> procs) {
@@ -103,6 +102,41 @@ public class CPUScheduler {
         double throughput = procs.size() / QUANTA_TO_RUN;
         System.out.println();
         System.out.println("Average Turnaround: " + avgTA + " Average Wait: " + avgWait + " Average Response Time: " + avgResp + " Throughput: " + throughput);
+        stats.add(new Statistics(avgTA, avgWait, avgResp, throughput));
+    }
+
+    public void calcAvgStats() {
+        double turnAround = 0;
+        double waiting = 0;
+        double response = 0;
+        double throughput = 0;
+        for (Statistics stat : stats) {
+            turnAround += stat.turnAround;
+            waiting += stat.waiting;
+            response += stat.response;
+            throughput += stat.throughput;
+        }
+        double avgTA = turnAround / stats.size();
+        double avgWait = waiting / stats.size();
+        double avgResp = response / stats.size();
+        double avgThroughput = throughput / stats.size();
+        System.out.println("ALG: Average Turnaround: " + avgTA + " Average Wait: " + avgWait + " Average Response Time: " + avgResp + " Throughput: " + avgThroughput);
+    }
+
+    class Statistics {
+
+        double turnAround = 0;
+        double waiting = 0;
+        double response = 0;
+        double throughput = 0;
+
+        public Statistics(double ta, double w, double r, double t) {
+            this.turnAround = ta;
+            this.waiting = w;
+            this.response = r;
+            this.throughput = t;
+        }
+
     }
 
 }

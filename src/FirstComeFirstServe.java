@@ -14,12 +14,13 @@ import java.util.Map;
  */
 public class FirstComeFirstServe implements Scheduler {
 
-    private final List<SimulatedProcess> readyQueue = new ArrayList();
+    private final List<SimulatedProcess> readyQueue = new ArrayList<>();
     private final Map<Float, SimulatedProcess> finished = new HashMap<>();
     private boolean shouldStop = false;
 
     /**
      * Adds a process to the ready queue
+     *
      * @param proc Process to add
      */
     @Override
@@ -29,6 +30,7 @@ public class FirstComeFirstServe implements Scheduler {
 
     /**
      * Checks if the ready queue is empty
+     *
      * @return whether the queue empty
      */
     @Override
@@ -37,7 +39,18 @@ public class FirstComeFirstServe implements Scheduler {
     }
 
     /**
+     * Resets scheduler
+     */
+    @Override
+    public void reset() {
+        readyQueue.clear();
+        finished.clear();
+        shouldStop = false;
+    }
+
+    /**
      * Executes first job and sends waiting to other
+     *
      * @param time Current time of CPU
      */
     @Override
@@ -51,12 +64,8 @@ public class FirstComeFirstServe implements Scheduler {
             readyQueue.get(i).waiting(); // Increment wait timer on process
         }
         if (proc.isFinished()) {
-<<<<<<< HEAD
-            finished.put(time, proc);
-=======
             finished.put(time, proc); // Adds to finished list
             readyQueue.remove(0); // Remove from ready queue
->>>>>>> refs/remotes/origin/master
             if (time >= CPUScheduler.QUANTA_TO_RUN - 1.0) {
                 shouldStop = true;
             }
@@ -65,6 +74,7 @@ public class FirstComeFirstServe implements Scheduler {
 
     /**
      * Returns whether the scheduler should stop
+     *
      * @return boolean showing whether the scheduler should stop
      */
     @Override
@@ -74,6 +84,7 @@ public class FirstComeFirstServe implements Scheduler {
 
     /**
      * Gets list of finished process
+     *
      * @return collection of finished processes
      */
     @Override
