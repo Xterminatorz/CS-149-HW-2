@@ -19,6 +19,12 @@ public class SimulatedProcess{
     private boolean isFinished;
     private float timeRemaining;
 
+    /**
+     *
+     * @param arrivalTime Arrival time of process
+     * @param totalRunTime How long the process should run
+     * @param priority Priority of the process
+     */
     public SimulatedProcess(float arrivalTime, float totalRunTime, int priority) {
         pId = ++nextpID;
         this.name = "P" + pId;
@@ -28,34 +34,67 @@ public class SimulatedProcess{
         this.timeRemaining = totalRunTime;
     }
 
+    /**
+     * Returns name of the process
+     * @return name of process
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns when this process should be added to the scheduler
+     * @return arrival time
+     */
     public float getArrivalTime() {
         return arrivalTime;
     }
 
+    /**
+     * Returns how long this process should run for
+     * @return length of the process
+     */
     public float getTotalRunTime() {
         return totalRunTime;
     }
 
+    /**
+     * Returns priority of this process
+     * @return priority
+     */
     public int getPriority() {
         return priority;
     }
 
+    /**
+     * Returns total life time of this process
+     * @return turnaround time
+     */
     public double getTurnaroundTime() {
         return waiting + totalRunTime;
     }
 
+    /**
+     * Returns how long this process has waited after being added to the scheduler
+     * @return waiting time
+     */
     public double getWaitingTime() {
         return waiting;
     }
 
+    /**
+     * Returns how long this process has waited before it started execution
+     * @return response time
+     */
     public double getResponseTime() {
         return response;
     }
 
+    /**
+     * Simulates an execution of a process
+     * Only decreases time remaining
+     * @param time current CPU time
+     */
     public void executing(float time) {
         if (startTime == -1) {
             startTime = time;
@@ -68,18 +107,33 @@ public class SimulatedProcess{
         }
     }
 
+    /**
+     * Increase waiting time of process
+     */
     public void waiting() {
         waiting += CPUScheduler.TIME_UNIT_QUANTA;
     }
 
+    /**
+     * Returns whether the process has finished execution
+     * @return whether process has finished
+     */
     public boolean isFinished() {
         return isFinished;
     }
 
+    /**
+     * Returns the time when this process was completed
+     * @return finish time
+     */
     public float getFinishTime() {
         return finishTime;
     }
 
+    /**
+     * Returns how long this process must be executed before completion
+     * @return time remaining
+     */
     public float getTimeRemaining() {
         return timeRemaining;
     }
