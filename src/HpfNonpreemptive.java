@@ -33,7 +33,7 @@ public class HpfNonpreemptive implements Scheduler
    
 
    /**
-    * checks queues in order of priority
+    * Runs queues in order of priority
     */
    @Override
    public void executing(float time)
@@ -49,18 +49,20 @@ public class HpfNonpreemptive implements Scheduler
          {
             proc = queueList.get(i).get(0);
             highestPriorityQueue = i;
-            if (highestPriorityQueue > -1)
-            {
-               for (int j = 1; j < queueList.get(i).size(); j++)
-               {
-                  queueList.get(i).get(j).waiting(); // Increment wait timer on process
-               }
-            }
+            break;
          }
       }
       proc.executing(time);
       System.out.print(proc.getName());
+      for (int i = highestPriorityQueue; i < 4; i++)
+      {
+         for (int j = 1; j < queueList.get(i).size(); j++)
+         {
+            queueList.get(i).get(j).waiting(); // Increment wait timer on process
+         }
 
+      }
+      
       if (proc.isFinished())
       {
          finished.put(time, proc); // Adds to finished list
