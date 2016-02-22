@@ -16,11 +16,15 @@ public class Main {
         CPUScheduler sched = new CPUScheduler(new FirstComeFirstServe());
         for (int i = 0; i < 5; i++) {
             sched.generateProcesses();
-            sched.start();
+            sched.start(); //whole process execution process, calls the algorithm's execution to handle the processes
             sched.reset();
+            System.out.println("\n");
         }
         sched.calcAvgStats();
-
+        
+        /*
+        System.out.println("\n\n\nRound Robin");
+        
         sched = new CPUScheduler(new RoundRobin());
         for (int i = 0; i < 5; i++) {
             sched.generateProcesses();
@@ -28,6 +32,20 @@ public class Main {
             sched.reset();
         }
         sched.calcAvgStats();
+        
+        */
+System.out.println("\n\nShortest Remaining Time");
+        
+        sched = new CPUScheduler(new ShortestRemainingTime());
+        for (int i = 0; i < 5; i++) {
+            sched.generateProcesses();
+            sched.start();
+            sched.reset();
+            System.out.println("\n");
+        }
+        sched.calcAvgStats();
+        
+        
     }
 
 }

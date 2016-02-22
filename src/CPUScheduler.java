@@ -15,7 +15,7 @@ import java.util.Random;
 public class CPUScheduler {
 
     private final Scheduler alg;
-    private final List<SimulatedProcess> processes = new ArrayList<>();
+    private final List<SimulatedProcess> processes = new ArrayList<>(); // full list of processes 
     private float currentTime = 0;
     private final List<Statistics> stats = new ArrayList<>();
     private static final Random R = new Random();
@@ -55,7 +55,7 @@ public class CPUScheduler {
         for (int i = 0; i < 50; i++) {
             SimulatedProcess proc = new SimulatedProcess(R.nextFloat() * 99, R.nextFloat() * 9.9f + 0.1f, R.nextInt(4) + 1);
             processes.add(proc);
-            System.out.println(proc.toString());
+            //System.out.println(proc.toString());
         }
         // Sort by arrival time
         processes.sort((p1, p2) -> Float.compare(p1.getArrivalTime(), p2.getArrivalTime()));
@@ -67,7 +67,7 @@ public class CPUScheduler {
     public void start() {
         boolean stop = false;
         while (!stop) {
-            // Adds process to scheduler if current time is >= arrival time of process
+            // Adds all processes to scheduler if current time is >= arrival time of process
             Iterator<SimulatedProcess> it = processes.iterator();
             while (it.hasNext()) {
                 SimulatedProcess proc = it.next();
@@ -78,7 +78,7 @@ public class CPUScheduler {
                     break;
                 }
             }
-            alg.executing(currentTime); // Run algorithm
+            alg.executing(currentTime); // Run algorithm, one process 
             currentTime += TIME_UNIT_QUANTA; // Increase CPU time
             if (processes.isEmpty() && (alg.isEmpty() || alg.shouldStop())) {
                 stop = true;
