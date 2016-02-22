@@ -18,7 +18,7 @@ public class CPUScheduler {
     private final List<SimulatedProcess> processes = new ArrayList<>(); // full list of processes 
     private float currentTime = 0;
     private final List<Statistics> stats = new ArrayList<>();
-    private static final Random R = new Random();
+    private static final Random R = new Random(0);
 
     /**
      * A time unit
