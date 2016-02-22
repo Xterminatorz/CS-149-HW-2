@@ -28,27 +28,13 @@ public class HpfNonpreemptive implements Scheduler
     */
    public void addProcess(SimulatedProcess proc)
    {
-      /*
-      if (proc.getPriority() == 1)
-      {
-         priorityQueue1.add(proc);
-      }
-      if (proc.getPriority() == 2)
-      {
-         priorityQueue2.add(proc);
-      }
-      if (proc.getPriority() == 3)
-      {
-         priorityQueue3.add(proc);
-      }
-      if (proc.getPriority() == 4)
-      {
-         priorityQueue4.add(proc);
-      }*/
-      queueList.add(queueList.get(proc.getPriority() - 1));
+      queueList.get(proc.getPriority() - 1).add(proc);
    }
    
 
+   /**
+    * checks queues in order of priority
+    */
    @Override
    public void executing(float time)
    {
@@ -72,6 +58,8 @@ public class HpfNonpreemptive implements Scheduler
             }
          }
       }
+      proc.executing(time);
+      System.out.print(proc.getName());
 
       if (proc.isFinished())
       {
