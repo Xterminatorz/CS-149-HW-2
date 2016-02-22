@@ -9,7 +9,7 @@ import java.util.PriorityQueue;
 
 public class HighestPriorityPreemptive implements Scheduler {
 
-	private final LinkedList<PriorityQueue<SimulatedProcess>> readyQueue;
+	private final ArrayList<PriorityQueue<SimulatedProcess>> readyQueue;
 	private final PriorityQueue<SimulatedProcess> priorityQueue1;
 	private final PriorityQueue<SimulatedProcess> priorityQueue2;
 	private final PriorityQueue<SimulatedProcess> priorityQueue3;
@@ -18,7 +18,7 @@ public class HighestPriorityPreemptive implements Scheduler {
     private boolean shouldStop;
     
 	public HighestPriorityPreemptive(){
-		readyQueue = new LinkedList<>();	
+		readyQueue = new ArrayList<>();	
 		priorityQueue1 = new PriorityQueue();
 		priorityQueue2 = new PriorityQueue();
 		priorityQueue3 = new PriorityQueue();
@@ -61,7 +61,7 @@ public class HighestPriorityPreemptive implements Scheduler {
 	                    shouldStop = true;
 	                }
 	            } else {
-	                readyQueue.offer(readyQueue.poll());
+	                readyQueue.get(i).offer(readyQueue.get(i).poll());
 	            }
 			}
 		}
