@@ -22,21 +22,12 @@ public class ShortestRemainingTime implements Scheduler {
         if (shouldStop || readyQueue.isEmpty())
             return;
 
-        SimulatedProcess proc = readyQueue.get(0); //have to initialize proc to some value
+        SimulatedProcess proc = readyQueue.get(0); // Get first process
 
-        //finds shortest remaining time if new processes are added
+        // Finds shortest remaining time if new processes are added
         if (prevQueueSize != readyQueue.size()) {
-            float shortestTime = 100000.0f; //initialize a value for shortest time
-            for (SimulatedProcess process : readyQueue) {
-                if (process.getTimeRemaining() < shortestTime) {
-                    proc = process;
-
-                    SimulatedProcess temp = process;
-                    process = readyQueue.get(0);
-                    readyQueue.set(0, temp);
-                }
-            }
-
+            readyQueue.sort((p1, p2) -> Float.compare(p1.getTimeRemaining(), p2.getTimeRemaining()));
+            proc = readyQueue.get(0);
             prevQueueSize = readyQueue.size();
         }
 
