@@ -1,58 +1,90 @@
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HighestPriorityPreemptive implements Scheduler {
 
-	private final List<List<SimulatedProcess>> readyQueue;
-	private final List<SimulatedProcess> priorityQueue1;
-	private final List<SimulatedProcess> priorityQueue2;
-	private final List<SimulatedProcess> priorityQueue3;
-	private final List<SimulatedProcess> priorityQueue4;
-	private final Map<Float, SimulatedProcess> finished;
-	private final Map<Float, SimulatedProcess> pQueue1Finished;
-	private final Map<Float, SimulatedProcess> pQueue2Finished;
-	private final Map<Float, SimulatedProcess> pQueue3Finished;
-	private final Map<Float, SimulatedProcess> pQueue4Finished;
-    private boolean shouldStop;
+	   private final LinkedList<SimulatedProcess> priorityQueue1 = new LinkedList<>();
+	   private final LinkedList<SimulatedProcess> priorityQueue2 = new LinkedList<>();
+	   private final LinkedList<SimulatedProcess> priorityQueue3 = new LinkedList<>();
+	   private final LinkedList<SimulatedProcess> priorityQueue4 = new LinkedList<>();
+	   private final Map<Integer, List<SimulatedProcess>> finished = new HashMap<>();
+	   private boolean shouldStop = false;
     
 	public HighestPriorityPreemptive(){
-		readyQueue = new ArrayList();	
-		priorityQueue1 = new ArrayList();
-		priorityQueue2 = new ArrayList();
-		priorityQueue3 = new ArrayList();
-		priorityQueue4 = new ArrayList();
-		readyQueue.add(priorityQueue1);
-		readyQueue.add(priorityQueue2);
-		readyQueue.add(priorityQueue3);
-		readyQueue.add(priorityQueue4);
-		
-		finished = new HashMap<>();
-		pQueue1Finished = new HashMap<>();
-		pQueue2Finished = new HashMap<>();
-		pQueue3Finished = new HashMap<>();
-		pQueue4Finished = new HashMap<>();
-		
-		shouldStop = false;
+		finished.put(1, new ArrayList<>());
+        finished.put(2, new ArrayList<>());
+        finished.put(3, new ArrayList<>());
+        finished.put(4, new ArrayList<>());
 	}
 	
 	@Override
 	public void addProcess(SimulatedProcess proc) {
 		// TODO Auto-generated method stub
-		readyQueue.get(proc.getPriority()-1).add(proc);
+		getPriorityQueueFromProcess(proc).add(proc);
 		
 	}
 
+    private LinkedList<SimulatedProcess> getPriorityQueueFromProcess(SimulatedProcess proc) {
+        switch (proc.getPriority()) {
+            case 1:
+                return priorityQueue1;
+            case 2:
+                return priorityQueue2;
+            case 3:
+                return priorityQueue3;
+            case 4:
+                return priorityQueue4;
+        }
+        return null;
+    }
+    
+    private SimulatedProcess getJob() {
+        if (!priorityQueue1.isEmpty()) {
+            return priorityQueue1.peek();
+        } else if (!priorityQueue2.isEmpty()) {
+            return priorityQueue2.peek();
+        } else if (!priorityQueue3.isEmpty()) {
+            return priorityQueue3.peek();
+           
+        }
+        return priorityQueue4.peek();
+    }
+
+    
 	@Override
 	public void executing(float time) {
 		// TODO Auto-generated method stub
 		if(shouldStop || isEmpty())
 			return;
+		SimulatedProcess proc = getJob();
+		proc.executing(time);
+		System.out.print(proc.getName());
+		// Loop through each queue that is not the currently running process
+		priorityQueue1.stream().filter(p -> p != proc).forEach(p -> p.waiting());
+		priorityQueue2.stream().filter(p -> p != proc).forEach(p -> p.waiting());
+		priorityQueue3.stream().filter(p -> p != proc).forEach(p -> p.waiting());
+		priorityQueue4.stream().filter(p -> p != proc).forEach(p -> p.waiting());
+		if (proc.isFinished()) {
+			List<SimulatedProcess> finish = finished.get(proc.getPriority());
+			finish.add(proc); // Adds to finished list
+			getPriorityQueueFromProcess(proc).remove(proc); // Remove from ready queue
+			if (time >= CPUScheduler.QUANTA_TO_RUN - 1.0) {
+				shouldStop = true;
+			}
+		}
+		else{
+			 getPriorityQueueFromProcess(proc).add(getPriorityQueueFromProcess(proc).remove(0));
+		}
+		/*
 		for(int i = 0; i < 4; i++)
 		{
 			if(readyQueue.get(i).isEmpty())
@@ -85,6 +117,7 @@ public class HighestPriorityPreemptive implements Scheduler {
 	            }
 			}
 		}
+		*/
 	}
 
 	@Override
@@ -97,18 +130,29 @@ public class HighestPriorityPreemptive implements Scheduler {
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-		for(List<SimulatedProcess> clearList: readyQueue)
-			clearList.clear();
-		readyQueue.clear();
-		shouldStop = false;
+        priorityQueue1.clear();
+        priorityQueue2.clear();
+        priorityQueue3.clear();
+        priorityQueue4.clear();
+        finished.get(1).clear();
+        finished.get(2).clear();
+        finished.get(3).clear();
+        finished.get(4).clear();
+        shouldStop = false;
 	}
 
 	@Override
 	public Collection<SimulatedProcess> getFinishedProcesses() {
 		// TODO Auto-generated method stub
-		return finished.values();
+        Stream<SimulatedProcess> joined = finished.values().stream().flatMap(List::stream);
+ // Joined stream of all queues
+        List<SimulatedProcess> list = joined.collect(Collectors.toList());
+        return Collections.unmodifiableCollection(list);
 	}
 
+    public Map getPriorityQueues() {
+        return finished;
+    }
 	@Override
 	public boolean shouldStop() {
 		// TODO Auto-generated method stub
