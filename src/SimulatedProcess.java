@@ -14,7 +14,7 @@ public class SimulatedProcess {
     private final String name;
     private final float arrivalTime, totalRunTime;
     private int priority;
-    private double waiting, response = 0;
+    private double waiting = 0, response = 0;
     private float startTime = -1, finishTime;
     private boolean isFinished;
     private float timeRemaining;
@@ -159,7 +159,7 @@ public class SimulatedProcess {
 
     @Override
     public String toString() {
-        return "Name=" + name + "/Arrival Time=" + arrivalTime + "/Expected Runtime=" + totalRunTime + "/Priority=" + priority;
+        return "Name=" + name + "/Arrival Time=" + arrivalTime + "/Expected Runtime=" + totalRunTime + "/Priority=" + priority + "/Turnaround=" + getTurnaroundTime();
     }
 
 }

@@ -31,7 +31,6 @@ public class HighestPriorityPreemptive implements Scheduler {
     @Override
     public void addProcess(SimulatedProcess proc) {
         getPriorityQueueFromProcess(proc).add(proc);
-
     }
 
     private LinkedList<SimulatedProcess> getPriorityQueueFromProcess(SimulatedProcess proc) {

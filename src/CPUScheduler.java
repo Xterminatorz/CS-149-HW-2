@@ -101,7 +101,7 @@ public class CPUScheduler {
         double avgTA = turnAround / procs.size();
         double avgWait = waiting / procs.size();
         double avgResp = response / procs.size();
-        double throughput = procs.size() / QUANTA_TO_RUN;
+        double throughput = procs.size() / currentTime;
         System.out.println("Average Turnaround: " + avgTA + " Average Wait: " + avgWait + " Average Response Time: " + avgResp + " Throughput: " + throughput);
         stats.add(new Statistics(avgTA, avgWait, avgResp, throughput));
         if (alg instanceof HPFNonpreemptive || alg instanceof HighestPriorityPreemptive) {
