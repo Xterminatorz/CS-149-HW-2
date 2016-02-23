@@ -23,7 +23,7 @@ public class ShortestJobFirst implements Scheduler {
             return;
 
         if (activeProcess == null) {
-            readyQueue.sort((p1, p2) -> Float.compare(p1.getFinishTime(), p2.getFinishTime()));
+            readyQueue.sort((p1, p2) -> Float.compare(p1.getTotalRunTime(), p2.getTotalRunTime()));
             activeProcess = readyQueue.get(0);
         }
         activeProcess.executing(time);
