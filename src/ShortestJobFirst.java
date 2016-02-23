@@ -34,8 +34,8 @@ public class ShortestJobFirst implements Scheduler {
         }
 
         if (activeProcess.isFinished()) {
-            activeProcess = null;
             finished.put(time, activeProcess); // Adds to finished list
+            activeProcess = null;
             readyQueue.remove(0); // Remove from ready queue
             if (time >= CPUScheduler.QUANTA_TO_RUN - 1.0) {
                 shouldStop = true;
