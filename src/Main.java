@@ -24,7 +24,6 @@ public class Main {
         sched.calcAvgStats();
 
         System.out.println("\n\nRound Robin");
-
         sched = new CPUScheduler(new RoundRobin());
         for (int i = 0; i < 5; i++) {
             sched.generateProcesses();
@@ -35,7 +34,6 @@ public class Main {
         sched.calcAvgStats();
 
         System.out.println("\n\nShortest Remaining Time");
-
         sched = new CPUScheduler(new ShortestRemainingTime());
         for (int i = 0; i < 5; i++) {
             sched.generateProcesses();
@@ -43,8 +41,8 @@ public class Main {
             sched.reset();
             System.out.println();
         }
-
         sched.calcAvgStats();
+
         System.out.println("\n\nHighest Priority First (Nonpreemptive)");
         sched = new CPUScheduler(new HPFNonpreemptive());
         for (int i = 0; i < 5; i++) {
@@ -55,6 +53,15 @@ public class Main {
         }
         sched.calcAvgStats();
 
+        System.out.println("\n\nHighest Priority First (Preemptive)");
+        sched = new CPUScheduler(new HighestPriorityPreemptive());
+        for (int i = 0; i < 5; i++) {
+            sched.generateProcesses();
+            sched.start();
+            sched.reset();
+            System.out.println();
+        }
+        sched.calcAvgStats();
     }
 
 }

@@ -104,9 +104,8 @@ public class CPUScheduler {
         double throughput = procs.size() / QUANTA_TO_RUN;
         System.out.println("Average Turnaround: " + avgTA + " Average Wait: " + avgWait + " Average Response Time: " + avgResp + " Throughput: " + throughput);
         stats.add(new Statistics(avgTA, avgWait, avgResp, throughput));
-        if (alg instanceof HPFNonpreemptive) {
-            HPFNonpreemptive hpf = (HPFNonpreemptive) alg;
-            Map<Integer, List> priorityQueues = hpf.getPriorityQueues();
+        if (alg instanceof HPFNonpreemptive || alg instanceof HighestPriorityPreemptive) {
+            Map<Integer, List<SimulatedProcess>> priorityQueues = alg.getFinishedPriorityQueues();
             priorityQueues.keySet().stream().forEach((p) -> {
                 List<SimulatedProcess> l = priorityQueues.get(p);
                 double pAvgTA = 0;

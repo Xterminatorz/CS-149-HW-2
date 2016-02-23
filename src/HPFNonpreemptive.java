@@ -128,13 +128,13 @@ public class HPFNonpreemptive implements Scheduler {
         return Collections.unmodifiableCollection(list);
     }
 
-    public Map getPriorityQueues() {
-        return finished;
-    }
-
     @Override
     public boolean shouldStop() {
         return shouldStop;
     }
 
+    @Override
+    public Map<Integer, List<SimulatedProcess>> getFinishedPriorityQueues() {
+        return finished;
+    }
 }

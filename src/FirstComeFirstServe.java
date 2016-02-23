@@ -94,4 +94,9 @@ public class FirstComeFirstServe implements Scheduler {
         return finished.values();
     }
 
+    @Override
+    public Map<Integer, List<SimulatedProcess>> getFinishedPriorityQueues() {
+        return null;
+    }
+
 }

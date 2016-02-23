@@ -3,6 +3,8 @@
  * Homework 2
  */
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -49,5 +51,12 @@ public interface Scheduler {
      * @return boolean showing whether the scheduler should stop
      */
     boolean shouldStop();
+
+    /**
+     * Gets mapping of finished process with respective priority queue
+     *
+     * @return collection of finished processes
+     */
+    Map<Integer, List<SimulatedProcess>> getFinishedPriorityQueues();
 
 }

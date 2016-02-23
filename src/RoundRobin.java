@@ -2,6 +2,7 @@
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,4 +67,8 @@ public class RoundRobin implements Scheduler {
         return shouldStop;
     }
 
+    @Override
+    public Map<Integer, List<SimulatedProcess>> getFinishedPriorityQueues() {
+        return null;
+    }
 }
