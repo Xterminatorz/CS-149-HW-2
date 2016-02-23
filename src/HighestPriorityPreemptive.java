@@ -9,26 +9,35 @@ import java.util.PriorityQueue;
 
 public class HighestPriorityPreemptive implements Scheduler {
 
-	private final ArrayList<PriorityQueue<SimulatedProcess>> readyQueue;
-	private final PriorityQueue<SimulatedProcess> priorityQueue1;
-	private final PriorityQueue<SimulatedProcess> priorityQueue2;
-	private final PriorityQueue<SimulatedProcess> priorityQueue3;
-	private final PriorityQueue<SimulatedProcess> priorityQueue4;
+	private final List<List<SimulatedProcess>> readyQueue;
+	private final List<SimulatedProcess> priorityQueue1;
+	private final List<SimulatedProcess> priorityQueue2;
+	private final List<SimulatedProcess> priorityQueue3;
+	private final List<SimulatedProcess> priorityQueue4;
 	private final Map<Float, SimulatedProcess> finished;
+	private final Map<Float, SimulatedProcess> pQueue1Finished;
+	private final Map<Float, SimulatedProcess> pQueue2Finished;
+	private final Map<Float, SimulatedProcess> pQueue3Finished;
+	private final Map<Float, SimulatedProcess> pQueue4Finished;
     private boolean shouldStop;
     
 	public HighestPriorityPreemptive(){
-		readyQueue = new ArrayList<>();	
-		priorityQueue1 = new PriorityQueue();
-		priorityQueue2 = new PriorityQueue();
-		priorityQueue3 = new PriorityQueue();
-		priorityQueue4 = new PriorityQueue();
+		readyQueue = new ArrayList();	
+		priorityQueue1 = new ArrayList();
+		priorityQueue2 = new ArrayList();
+		priorityQueue3 = new ArrayList();
+		priorityQueue4 = new ArrayList();
 		readyQueue.add(priorityQueue1);
 		readyQueue.add(priorityQueue2);
 		readyQueue.add(priorityQueue3);
 		readyQueue.add(priorityQueue4);
 		
 		finished = new HashMap<>();
+		pQueue1Finished = new HashMap<>();
+		pQueue2Finished = new HashMap<>();
+		pQueue3Finished = new HashMap<>();
+		pQueue4Finished = new HashMap<>();
+		
 		shouldStop = false;
 	}
 	
@@ -52,16 +61,27 @@ public class HighestPriorityPreemptive implements Scheduler {
 				process.executing(time);
 	        	System.out.print(process.getName());
 	        	for (int j = 1; j < readyQueue.get(i).size(); j++) {
-	                readyQueue.get(i).peek().waiting();
+	                readyQueue.get(i).get(j).waiting();
 	            }
 	            if (process.isFinished()) {
 	                finished.put(time, process);
+	                if(i == 0)
+	                	pQueue1Finished.put(time, process);
+	                else if(i== 1)
+	                	pQueue2Finished.put(time, process);
+	                else if(i== 2)
+	                	pQueue3Finished.put(time, process);
+	                else {
+	                	pQueue4Finished.put(time, process);
+					}
 	                readyQueue.get(i).remove(process);
 	                if (time >= CPUScheduler.QUANTA_TO_RUN - 1.0) {
 	                    shouldStop = true;
 	                }
 	            } else {
-	                readyQueue.get(i).offer(readyQueue.get(i).poll());
+	            	
+	                readyQueue.get(i).add(readyQueue.get(i).remove(0));
+	              
 	            }
 			}
 		}
