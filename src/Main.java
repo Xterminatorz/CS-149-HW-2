@@ -23,6 +23,17 @@ public class Main {
         }
         sched.calcAvgStats();
 
+        System.out.println("\n\nShortest Job First");
+        sched = new CPUScheduler(new ShortestJobFirst());
+        for (int i = 0; i < 5; i++) {
+            sched.generateProcesses();
+            sched.start();
+            sched.reset();
+            System.out.println();
+        }
+        sched.calcAvgStats();
+        
+        
         System.out.println("\n\nRound Robin");
         sched = new CPUScheduler(new RoundRobin());
         for (int i = 0; i < 5; i++) {
