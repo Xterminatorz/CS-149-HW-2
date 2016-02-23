@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,9 @@ public class HPFNonpreemptive implements Scheduler {
     private final LinkedList<SimulatedProcess> priorityQueue3 = new LinkedList<>();
     private final LinkedList<SimulatedProcess> priorityQueue4 = new LinkedList<>();
     private final Map<Integer, List<SimulatedProcess>> finished = new HashMap<>();
+    private final List<SimulatedProcess> agedProcesses = new ArrayList<>();
     private boolean shouldStop = false;
+    private final boolean aging = false;
 
     public HPFNonpreemptive() {
         finished.put(1, new ArrayList<>());
@@ -58,6 +61,13 @@ public class HPFNonpreemptive implements Scheduler {
         return priorityQueue4.peek();
     }
 
+    private void waitProcess(SimulatedProcess p) {
+        p.waiting();
+        if (aging && p.getPriority() != 1 && p.getWaitingTime() > 0 && p.getWaitingTime() % 5 == 0) {
+            agedProcesses.add(p);
+        }
+    }
+
     /**
      * Runs queues in order of priority
      */
@@ -69,10 +79,18 @@ public class HPFNonpreemptive implements Scheduler {
         proc.executing(time);
         System.out.print(proc.getName());
         // Loop through each queue that is not the currently running process
-        priorityQueue1.stream().filter(p -> p != proc).forEach(p -> p.waiting());
-        priorityQueue2.stream().filter(p -> p != proc).forEach(p -> p.waiting());
-        priorityQueue3.stream().filter(p -> p != proc).forEach(p -> p.waiting());
-        priorityQueue4.stream().filter(p -> p != proc).forEach(p -> p.waiting());
+        priorityQueue1.stream().filter(p -> p != proc).forEach(p -> waitProcess(p));
+        priorityQueue2.stream().filter(p -> p != proc).forEach(p -> waitProcess(p));
+        priorityQueue3.stream().filter(p -> p != proc).forEach(p -> waitProcess(p));
+        priorityQueue4.stream().filter(p -> p != proc).forEach(p -> waitProcess(p));
+        Iterator<SimulatedProcess> i = agedProcesses.iterator();
+        while (i.hasNext()) {
+            SimulatedProcess p = i.next();
+            getPriorityQueueFromProcess(p).remove(p);
+            p.setPriority(p.getPriority() - 1);
+            getPriorityQueueFromProcess(p).add(p);
+            i.remove();
+        }
         if (proc.isFinished()) {
             List<SimulatedProcess> finish = finished.get(proc.getPriority());
             finish.add(proc); // Adds to finished list
@@ -104,8 +122,8 @@ public class HPFNonpreemptive implements Scheduler {
 
     @Override
     public Collection<SimulatedProcess> getFinishedProcesses() {
+        // Joined stream of all queues
         Stream<SimulatedProcess> joined = finished.values().stream().flatMap(List::stream);
- // Joined stream of all queues
         List<SimulatedProcess> list = joined.collect(Collectors.toList());
         return Collections.unmodifiableCollection(list);
     }

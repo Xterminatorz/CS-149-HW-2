@@ -13,7 +13,7 @@ public class SimulatedProcess {
     private final long pId;
     private final String name;
     private final float arrivalTime, totalRunTime;
-    private final int priority;
+    private int priority;
     private double waiting, response = 0;
     private float startTime = -1, finishTime;
     private boolean isFinished;
@@ -68,6 +68,14 @@ public class SimulatedProcess {
      */
     public int getPriority() {
         return priority;
+    }
+
+    /**
+     * Sets priority of this process with a new one
+     * @param newPriority
+     */
+    public void setPriority(int newPriority) {
+        priority = newPriority;
     }
 
     /**
