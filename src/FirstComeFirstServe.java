@@ -50,8 +50,9 @@ public class FirstComeFirstServe implements Scheduler {
 
     /**
      * Executes first job and sends waiting to other
-     * 
-     * one process gets executed  method call
+     *
+     * one process gets executed method call
+     *
      * @param time Current time of CPU
      */
     @Override

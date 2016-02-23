@@ -7,7 +7,7 @@
  *
  * @author Johnny
  */
-public class SimulatedProcess{
+public class SimulatedProcess {
 
     private static long nextpID = 0;
     private final long pId;
@@ -36,6 +36,7 @@ public class SimulatedProcess{
 
     /**
      * Returns name of the process
+     *
      * @return name of process
      */
     public String getName() {
@@ -44,6 +45,7 @@ public class SimulatedProcess{
 
     /**
      * Returns when this process should be added to the scheduler
+     *
      * @return arrival time
      */
     public float getArrivalTime() {
@@ -52,6 +54,7 @@ public class SimulatedProcess{
 
     /**
      * Returns how long this process should run for
+     *
      * @return length of the process
      */
     public float getTotalRunTime() {
@@ -60,6 +63,7 @@ public class SimulatedProcess{
 
     /**
      * Returns priority of this process
+     *
      * @return priority
      */
     public int getPriority() {
@@ -68,6 +72,7 @@ public class SimulatedProcess{
 
     /**
      * Returns total life time of this process
+     *
      * @return turnaround time
      */
     public double getTurnaroundTime() {
@@ -75,7 +80,9 @@ public class SimulatedProcess{
     }
 
     /**
-     * Returns how long this process has waited after being added to the scheduler
+     * Returns how long this process has waited after being added to the
+     * scheduler
+     *
      * @return waiting time
      */
     public double getWaitingTime() {
@@ -84,6 +91,7 @@ public class SimulatedProcess{
 
     /**
      * Returns how long this process has waited before it started execution
+     *
      * @return response time
      */
     public double getResponseTime() {
@@ -91,8 +99,8 @@ public class SimulatedProcess{
     }
 
     /**
-     * Simulates an execution of a process
-     * Only decreases time remaining
+     * Simulates an execution of a process. Only decreases time remaining
+     *
      * @param time current CPU time
      */
     public void executing(float time) {
@@ -116,6 +124,7 @@ public class SimulatedProcess{
 
     /**
      * Returns whether the process has finished execution
+     *
      * @return whether process has finished
      */
     public boolean isFinished() {
@@ -124,6 +133,7 @@ public class SimulatedProcess{
 
     /**
      * Returns the time when this process was completed
+     *
      * @return finish time
      */
     public float getFinishTime() {
@@ -132,6 +142,7 @@ public class SimulatedProcess{
 
     /**
      * Returns how long this process must be executed before completion
+     *
      * @return time remaining
      */
     public float getTimeRemaining() {
