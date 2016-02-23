@@ -24,7 +24,7 @@ public class RoundRobin implements Scheduler {
     public void executing(float time) {
         if (shouldStop || readyQueue.isEmpty())
             return;
-        SimulatedProcess proc = readyQueue.get(0);
+        SimulatedProcess proc = readyQueue.getFirst();
         proc.executing(time);
         System.out.print(proc.getName());
         for (int i = 1; i < readyQueue.size(); i++) {

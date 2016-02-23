@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -15,10 +16,10 @@ import java.util.Random;
 public class CPUScheduler {
 
     private final Scheduler alg;
-    private final List<SimulatedProcess> processes = new ArrayList<>(); // full list of processes 
+    private final List<SimulatedProcess> processes = new ArrayList<>(); // full list of processes
     private float currentTime = 0;
     private final List<Statistics> stats = new ArrayList<>();
-    private static final Random R = new Random(0);
+    private final Random R = new Random(0);
 
     /**
      * A time unit
@@ -55,7 +56,6 @@ public class CPUScheduler {
         for (int i = 0; i < 50; i++) {
             SimulatedProcess proc = new SimulatedProcess(R.nextFloat() * 99, R.nextFloat() * 9.9f + 0.1f, R.nextInt(4) + 1);
             processes.add(proc);
-            //System.out.println(proc.toString());
         }
         // Sort by arrival time
         processes.sort((p1, p2) -> Float.compare(p1.getArrivalTime(), p2.getArrivalTime()));
@@ -78,7 +78,7 @@ public class CPUScheduler {
                     break;
                 }
             }
-            alg.executing(currentTime); // Run algorithm, one process 
+            alg.executing(currentTime); // Run algorithm, one process
             currentTime += TIME_UNIT_QUANTA; // Increase CPU time
             if (processes.isEmpty() && (alg.isEmpty() || alg.shouldStop())) {
                 stop = true;
@@ -91,7 +91,9 @@ public class CPUScheduler {
         double turnAround = 0;
         double waiting = 0;
         double response = 0;
+        System.out.println();
         for (SimulatedProcess proc : procs) {
+            System.out.println(proc);
             turnAround += proc.getTurnaroundTime();
             waiting += proc.getWaitingTime();
             response += proc.getResponseTime();
@@ -100,9 +102,24 @@ public class CPUScheduler {
         double avgWait = waiting / procs.size();
         double avgResp = response / procs.size();
         double throughput = procs.size() / QUANTA_TO_RUN;
-        System.out.println();
         System.out.println("Average Turnaround: " + avgTA + " Average Wait: " + avgWait + " Average Response Time: " + avgResp + " Throughput: " + throughput);
         stats.add(new Statistics(avgTA, avgWait, avgResp, throughput));
+        if (alg instanceof HPFNonpreemptive) {
+            HPFNonpreemptive hpf = (HPFNonpreemptive) alg;
+            Map<Integer, List> priorityQueues = hpf.getPriorityQueues();
+            priorityQueues.keySet().stream().forEach((p) -> {
+                List<SimulatedProcess> l = priorityQueues.get(p);
+                double pAvgTA = 0;
+                double pAvgWait = 0;
+                double pAvgResp = 0;
+                for (SimulatedProcess proc : l) {
+                    pAvgTA += proc.getTurnaroundTime();
+                    pAvgWait += proc.getWaitingTime();
+                    pAvgResp += proc.getResponseTime();
+                }
+                System.out.println("Priority Queue " + p + ": Average Turnaround: " + (l.isEmpty() ? 0 : pAvgTA / l.size()) + " Average Wait: " + (l.isEmpty() ? 0 : pAvgWait / l.size()) + " Average Response Time: " + (l.isEmpty() ? 0 : pAvgResp / l.size()) + " Throughput: " + l.size() / QUANTA_TO_RUN);
+            });
+        }
     }
 
     public void calcAvgStats() {
